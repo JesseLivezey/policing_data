@@ -39,9 +39,9 @@ def make_barplot(national_data, local_data, county, features, ax):
     
     labels = []
     for r, q in zip(race, race_qualifiers):
-        labels.append('County')
-        labels.append('{} {}'.format(r, q))
         labels.append('National')
+        labels.append('{} {}    '.format(r, q))
+        labels.append('County')
     
     n_bars = 2 * len(features)
     ycur = 0
@@ -62,7 +62,7 @@ def make_barplot(national_data, local_data, county, features, ax):
         x.append(loc_data[f].values[0])
     
     y = y[::-1]
-    labels = labels
+    y_labels = y_labels[::-1]
     
     baseline_mid = .5 * (y[0] + y[-1])
     baseline_height = abs((y[-1] - y[0])) + 2 * height
@@ -82,3 +82,5 @@ def make_barplot(national_data, local_data, county, features, ax):
     ax.spines['bottom'].set_visible(False)
     ax.set_ylim(baseline_mid - .5 * baseline_height, baseline_mid + .5 * baseline_height)
     ax.set_title(county)
+    for t in ax.yaxis.get_ticklines():
+        t.set_visible(False)
