@@ -1,4 +1,5 @@
 def make_barplot(national_data, local_data, county, features, ax):
+    height = .8
     loc_data = local_data.loc[local_data['county'] == county]
     
     race = [f.split('_')[1] for f in features]
@@ -42,9 +43,20 @@ def make_barplot(national_data, local_data, county, features, ax):
     y = y[::-1]
     labels = labels
     
-    ax.barh(y, x)
+    baseline_mid = .5 * (y[0] + y[-1])
+    baseline_height = abs((y[-1] - y[0])) + 2 * height
+    ax.barh(baseline_mid, 1, height=baseline_height, color='gray', alpha=.8)
+    
+    ax.barh(y, x, height=height, alpha=.8)
     ax.set_yticks(y)
     ax.set_yticklabels(labels)
+    ax.set_xticks([])
     
-    ax.set_xlabel('Relative risk of being shot by police vs. {} {}'.format(compare_race, compare_qualifier))
-    ax.axvline(1, linestyle='--', lw=2, c='k')
+    ax.set_xlabel('Relative risk of being shot by police\nvs. {} {}'.format(compare_race, compare_qualifier))
+    #ax.axvline(1, linestyle='--', lw=2, c='k')
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.set_ylim(baseline_mid - .5 * baseline_height, baseline_mid + .5 * baseline_height)
