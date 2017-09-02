@@ -1,4 +1,20 @@
 def make_barplot(national_data, local_data, county, features, ax):
+    """Plot county and national relative risks.
+
+    Parameters
+    ----------
+    national_data : dataframe
+        Dataframe of national data.
+    local_Data : dataframe
+        Dateframe of county-level data.
+    county : string
+        County to select data from.
+    features : list
+        List of relative risks to plot.
+    ax : matplotlib axes
+        Axes instance to add bar plot to.
+    """
+
     height = .8
     loc_data = local_data.loc[local_data['county'] == county]
     
