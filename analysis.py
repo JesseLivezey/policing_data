@@ -70,8 +70,6 @@ def make_barplot(national_data, local_data, county, features, ax):
     y = y[::-1]
     y_labels = y_labels[::-1]
 
-    print(y)
-    print(x)
     delta = .275 * max(x)
     for x_loc, y_loc in zip(x, y):
         if x_loc > .25:
