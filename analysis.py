@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def make_barplot(national_data, local_data, county, features, ax):
     """Plot county and national relative risks.
 
@@ -15,9 +18,12 @@ def make_barplot(national_data, local_data, county, features, ax):
         Axes instance to add bar plot to.
     """
 
+
+    fontsize = 14
+
     height = .8
     loc_data = local_data.loc[local_data['county'] == county]
-    
+
     race = [f.split('_')[1] for f in features]
     race_qualifiers = [f.split('_')[2] for f in features]
     compare_races = []
@@ -36,13 +42,13 @@ def make_barplot(national_data, local_data, county, features, ax):
     assert all(compare_qualifiers[0] == cq for cq in compare_qualifiers)
     compare_race = compare_races[0]
     compare_qualifier = compare_qualifiers[0]
-    
+
     labels = []
     for r, q in zip(race, race_qualifiers):
         labels.append('National')
         labels.append('{} {}    '.format(r, q))
         labels.append('County')
-    
+
     n_bars = 2 * len(features)
     ycur = 0
     y = []
@@ -55,25 +61,37 @@ def make_barplot(national_data, local_data, county, features, ax):
         y.append(ycur)
         y_labels.append(ycur)
         ycur += 1.5
-    
+
     x = []
     for f in features:
         x.append(national_data[f].values[0])
         x.append(loc_data[f].values[0])
-    
+
     y = y[::-1]
     y_labels = y_labels[::-1]
-    
+
+    print(y)
+    print(x)
+    delta = .275 * max(x)
+    for x_loc, y_loc in zip(x, y):
+        if x_loc > .25:
+            x_tmp = x_loc - delta
+        else:
+            x_tmp = x_loc #+ delta
+        ax.text(x_tmp, y_loc, '{}x'.format(round(x_loc, 2)),
+                fontsize=14, color='white', fontweight='bold')
+
     baseline_mid = .5 * (y[0] + y[-1])
     baseline_height = abs((y[-1] - y[0])) + 2 * height
     ax.barh(baseline_mid, 1, height=baseline_height, color='gray', alpha=.8)
-    
+
     ax.barh(y, x, height=height, alpha=.8)
     ax.set_yticks(y_labels)
-    ax.set_yticklabels(labels)
+    ax.set_yticklabels(labels, fontsize=fontsize)
     ax.set_xticks([])
-    
-    ax.set_xlabel('Relative risk of being shot by police\nvs. {} {}'.format(compare_race, compare_qualifier))
+
+    ax.set_xlabel('Relative risk of being shot by police\nvs. {} {}'.format(compare_race, compare_qualifier),
+                  fontsize=fontsize)
     #ax.axvline(1, linestyle='--', lw=2, c='k')
 
     ax.spines['top'].set_visible(False)
@@ -81,6 +99,6 @@ def make_barplot(national_data, local_data, county, features, ax):
     ax.spines['left'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.set_ylim(baseline_mid - .5 * baseline_height, baseline_mid + .5 * baseline_height)
-    ax.set_title(county)
+    ax.set_title(county, fontsize=fontsize)
     for t in ax.yaxis.get_ticklines():
         t.set_visible(False)
