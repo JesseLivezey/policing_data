@@ -1,7 +1,12 @@
 import numpy as np
 
 
-def make_barplot(national_data, local_data, county, features, ax):
+def get_max_ratio(national_data, local_data, county, features):
+    loc_data = local_data.loc[local_data['county'] == county]
+    return np.amax(np.stack((national_data[features].values, loc_data[features].values)))
+
+
+def make_barplot(national_data, local_data, county, features, max_ratio, ax):
     """Plot county and national relative risks.
 
     Parameters
@@ -70,13 +75,11 @@ def make_barplot(national_data, local_data, county, features, ax):
     y = y[::-1]
     y_labels = y_labels[::-1]
 
-    delta = .275 * max(x)
+    delta = .4 / 4.5
     for x_loc, y_loc in zip(x, y):
-        if x_loc > .25:
-            x_tmp = x_loc - delta
-        else:
-            x_tmp = x_loc #+ delta
-        ax.text(x_tmp, y_loc, '{}x'.format(round(x_loc, 2)),
+        string = '{}'.format(round(x_loc, 2))
+        x_tmp = x_loc - delta * (len(string)-1 + .5)
+        ax.text(x_tmp, y_loc, string,
                 fontsize=14, color='white', fontweight='bold')
 
     baseline_mid = .5 * (y[0] + y[-1])
@@ -87,10 +90,9 @@ def make_barplot(national_data, local_data, county, features, ax):
     ax.set_yticks(y_labels)
     ax.set_yticklabels(labels, fontsize=fontsize)
     ax.set_xticks([])
-
     ax.set_xlabel('Relative risk of being shot by police\nvs. {} {}'.format(compare_race, compare_qualifier),
                   fontsize=fontsize)
-    #ax.axvline(1, linestyle='--', lw=2, c='k')
+    ax.set_xlim(0, max_ratio)
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
